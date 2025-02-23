@@ -1,0 +1,98 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+
+
+
+
+
+.top-left-button {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 10px 20px;
+  background-color: #0e0f0e;
+  color: white;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  
+}
+.top-left-button:hover {
+  border-color: #727ee0;  /* Darker border color on hover */
+}
+.address-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 600px;
+  margin-top: 30px;
+}
+
+.input-field {
+  box-sizing: border-box;
+  border: 1px solid transparent;
+  height: 50px;
+  padding: 0 12px;
+  border-radius: 3px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  font-size: 14px;
+  outline: none;
+  text-overflow: ellipsis;
+  width: 48%;
+}
+
+
+
+.top-right-container {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 300px; /* Adjust the width as needed */
+  height: 150px; /* Adjust the height as needed */
+  background-color: transparent; /* Light gray background */
+  border-radius: 10px;
+  padding: 20px;
+  
+}
+.top-right-input {
+
+  width: 50%;
+  height: 40px;
+  font-size: 16px;
+  text-align: center;
+  border: 2px solid #727ee0;
+  border-radius: 5px;
+  padding: 5px;
+  outline: none;
+}
+
+.input-field {
+  box-sizing: border-box;
+  border: 1px solid transparent;
+  width: 100%;
+  height: 50px;
+  padding: 0 12px;
+  border-radius: 3px;
+  box-shadow: 0 2px 6px rgba(8, 8, 8, 0.3);
+  font-size: 14px;
+  outline: none;
+  text-overflow: ellipsis;
+  margin-top: 30px;
+  margin-left: 0px;
+
+}
+
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
