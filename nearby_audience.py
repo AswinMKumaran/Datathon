@@ -229,7 +229,7 @@ def get_road_location(lat, lng):
     if ("route" in data):
       print("Found Snapped Points")
       snapped_point = data["route"][0]["geometry"]["coordinates"][0]
-      print(snapped_point[1], snapped_point[0])
+      #print(snapped_point[1], snapped_point[0])
       return snapped_point[1], snapped_point[0]
     else:
       print("No snapped points found")
@@ -352,10 +352,10 @@ def calculate_final_score(address):
 
     brand_score = calculate_brand_score(business_type, competitor_types)
 
-    print("Age Score: " + str(age_score))
-    print("Income Score: " + str(income_score))
-    print("Brand Score: " + str(brand_score))
-    print("Traffic Score: " + str(traffic_score) + "\n")
+    # print("Age Score: " + str(age_score))
+    # print("Income Score: " + str(income_score))
+    # print("Brand Score: " + str(brand_score))
+    # print("Traffic Score: " + str(traffic_score) + "\n")
 
     total_score = age_score + income_score + traffic_score + brand_score
 
@@ -400,16 +400,3 @@ def calculate_final_score(address):
             improvement_message = "Error"
 
     return total_score, improvement_message
-
-
-total_score, improvement_message = calculate_final_score(address)
-print(total_score)
-print(improvement_message)
-
-
-
-
-
-# if __name__ == "__main__":
-#     address = "Tin Drum Asian Kitchen & Boba Tea Bar, 88 5th St NW, Atlanta, GA 30308"
-#     analyze_nearby_audience(address)
