@@ -2,6 +2,7 @@ import requests
 from pprint import pprint
 
 GOOGLE_API_KEY = "AIzaSyDhVgRxfBbURvJSiMpUPrGzi5qzHLGrN4Q"
+API_KEY_SNAP = "O08DVAiFeIJWNEknkZSxk7Jel3W1dH23"
 
 BUSINESS_AGE_INCOME_MAPPING = {
     "accounting": {"age": (25, 65), "income": (50000, 150000)},
@@ -158,5 +159,5 @@ def predict_target_age_income(address, state_fips, county_fips):
                     min(base_data["income"][1], local_income * 1.2)
                 )
             return {"age": base_data["age"], "income": adjusted_income}
-            
+
     return {"age": "Unknown", "income": "Unknown"}
