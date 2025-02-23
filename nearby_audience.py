@@ -255,14 +255,15 @@ def get_traffic_speed(lat, lng):
 #Returns traffic score
 def calculate_traffic_score(target_speed_range, average_speed, std_dev=5):
     target_mid = (target_speed_range[0] + target_speed_range[1]) / 2.0
-    deviation = abs(average_speed - target_mid)
+    deviation = average_speed - target_mid
+    abs_deviation = abs(deviation)
 
-    if deviation <= std_dev:
-        return 30
+    if abs_deviation <= std_dev:
+        return 30, deviation
     else:
-        penalty = deviation - std_dev
+        penalty = abs_deviation - std_dev
         score = 30 - penalty
-        return max(0, score)
+        return max(0, score), deviation
 
 #Gets Median Age in surrounding area
 def get_census_age(state_fips, county_fips):
@@ -284,14 +285,15 @@ def get_census_age(state_fips, county_fips):
 #Returns Age Score
 def calculate_age_match_score(target_age_range, nearby_median_age, std_dev=2):
     target_mid = (target_age_range[0] + target_age_range[1]) / 2.0
-    deviation = abs(nearby_median_age - target_mid)
+    deviation = nearby_median_age - target_mid
+    abs_deviation = abs(deviation)
     
-    if deviation <= std_dev:
-        return 30  # Maximum score
+    if abs_deviation <= std_dev:
+        return 30, deviation  # Maximum score
     else:
-        penalty = deviation - std_dev
+        penalty = abs_deviation - std_dev
         score = 30 - penalty
-        return max(score, 0)  
+        return max(score, 0), deviation 
 
 #Gets Median Income in surrounding area
 def get_census_income(state_fips, county_fips):
@@ -314,14 +316,15 @@ def get_census_income(state_fips, county_fips):
 def calculate_income_match_score(target_income_range, nearby_median_income, std_dev=5000):
     
     target_mid = (target_income_range[0] + target_income_range[1]) / 2.0
-    deviation = abs(nearby_median_income - target_mid)
+    deviation = nearby_median_income - target_mid
+    abs_deviation = abs(deviation)
 
-    if deviation <= 5000:
-        return 15  # Maximum score
+    if abs_deviation <= 5000:
+        return 15, deviation  # Maximum score
     else:
-        penalty = int((deviation - std_dev) / std_dev)
+        penalty = int((abs_deviation - std_dev) / std_dev)
         score = 15 - penalty
-        return max(score, 0)  # Ensure the score is not negative
+        return max(score, 0), deviation  # Ensure the score is not negative
     
 def calculate_final_score(address):
     lat, lng = get_lat_long(address)
@@ -336,16 +339,16 @@ def calculate_final_score(address):
 
     median_age = get_census_age(state_fips, county_fips)
     target_age_range = BUSINESS_AGE_INCOME_MAPPING.get(business_type)["age"]
-    age_score = calculate_age_match_score(target_age_range, median_age)
+    age_score, age_deviation = calculate_age_match_score(target_age_range, median_age)
     
     median_income = get_census_income(state_fips, county_fips)
     target_income_range = BUSINESS_AGE_INCOME_MAPPING.get(business_type)["income"]
-    income_score = calculate_income_match_score(target_income_range, median_income)
+    income_score, income_deviation = calculate_income_match_score(target_income_range, median_income)
 
     road_lat, road_lng = get_road_location(lat, lng)
     average_speed = get_traffic_speed(road_lat, road_lng)
     traffic_range = (0, 60)
-    traffic_score = calculate_traffic_score(traffic_range, average_speed)
+    traffic_score, traffic_deviation = calculate_traffic_score(traffic_range, average_speed)
 
     brand_score = calculate_brand_score(business_type, competitor_types)
 
@@ -358,8 +361,54 @@ def calculate_final_score(address):
 
     print("Total Score: " + str(total_score) + "/100")
 
+    arr_of_scores = [age_score, income_score, brand_score, traffic_score]
+    score_names = ['Age Score', 'Income Score', 'Brand Score', 'Traffic Score']
 
-calculate_final_score(address)
+    # Pairing each score with its name
+    paired_scores = list(zip(score_names, arr_of_scores))
+
+    # Sort by numerical value (lowest score has highest priority)
+    sorted_scores = sorted(paired_scores, key=lambda x: x[1])
+
+    # Determine improvement message based on lowest score
+    lowest_score_name = sorted_scores[0][0]
+
+    improvement_message = ""
+
+    if lowest_score_name == 'Age Score':
+        if age_deviation >= 0:
+            improvement_message = "Your nearby age audience is too high! Make your target audience higher age"
+        else:
+            improvement_message = "Your nearby age audience is too low! Make your target audience lower age"
+
+    elif lowest_score_name == 'Income Score':
+        if income_deviation >= 0:
+            improvement_message = "Your nearby audience makes too much money! They probably won't like your products... Make your products higher quality!"
+        else:
+            improvement_message = "Your nearby audience doesn't make that much money... Try to make your prices lower!"
+
+    elif lowest_score_name == 'Traffic Score':
+        if traffic_deviation >= 0:
+            improvement_message = "The people passing by your shop are driving by too fast so they can't see your store!"
+        else:
+            improvement_message = "Error"
+
+    elif lowest_score_name == 'Brand Score':
+        if brand_score <= 12.5:
+            improvement_message = "There are too many similar shops to your store! Try to either make your products stand out or go into a different industry"
+        else:
+            improvement_message = "Error"
+
+    return total_score, improvement_message
+
+
+total_score, improvement_message = calculate_final_score(address)
+print(total_score)
+print(improvement_message)
+
+
+
+
 
 # if __name__ == "__main__":
 #     address = "Tin Drum Asian Kitchen & Boba Tea Bar, 88 5th St NW, Atlanta, GA 30308"
